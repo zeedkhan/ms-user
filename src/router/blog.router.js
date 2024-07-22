@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { blogSchema } = require("../validator");
-const { getAllBlog, getBlog, createBlog, updateBlog, deleteBlog, getUserBlogs, duplicateSeoPath } = require("../controller/blog.controller");
+const { getAllBlog, getBlog, createBlog, updateBlog, deleteBlog, getUserBlogs, getBlogPath } = require("../controller/blog.controller");
 const validator = require('express-joi-validation').createValidator({});
 
 const BlogRouter = Router();
@@ -17,6 +17,6 @@ BlogRouter.delete("/:blogId", deleteBlog)
 // get user's blogs
 BlogRouter.get("/user/:userId", getUserBlogs)
 // seo path checker
-BlogRouter.get("/seo-path/:pathName", duplicateSeoPath)
+BlogRouter.get("/path/:pathName", getBlogPath)
 
 module.exports = BlogRouter

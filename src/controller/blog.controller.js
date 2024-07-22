@@ -28,8 +28,8 @@ const getBlog = async (req, res) => {
 
 // Create a new blog
 const createBlog = async (req, res) => {
-    const { title, content, userId, description } = req.body;
-    if (!title || !content || !userId) {
+    const { title, seoPath, content, userId, description, version } = req.body;
+    if (!title || !content || !userId || !seoPath) {
         return res.json({ error: "Missing required fields" }).status(400)
     }
 
@@ -37,6 +37,8 @@ const createBlog = async (req, res) => {
         const blog = await prisma.blog.create({
             data: {
                 title,
+                version,
+                seoPath: seoPath.replace(/\s/g, '-').toLowerCase(),
                 content,
                 userId,
                 description
@@ -123,8 +125,8 @@ const getUserBlogs = async (req, res) => {
     }
 };
 
-// check duplicate seo;
-const duplicateSeoPath = async (req, res) => {
+// get blog by blog path
+const getBlogPath = async (req, res) => {
     const pathName = req.params.pathName;
     if (!pathName) {
         return res.json(true);
@@ -136,13 +138,12 @@ const duplicateSeoPath = async (req, res) => {
             }
         });
 
-        // not found duplicate valid path name
         console.log(findBlog)
         if (!findBlog) {
-            return res.json(false)
+            return res.json(null)
         }
 
-        return res.json(true);
+        return res.json(findBlog);
     } catch (err) {
         console.error(err)
         return res.json(true);
@@ -157,5 +158,5 @@ module.exports = {
     createBlog,
     updateBlog,
     deleteBlog,
-    duplicateSeoPath
+    getBlogPath
 }

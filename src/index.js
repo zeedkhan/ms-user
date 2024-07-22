@@ -7,4 +7,4 @@ app.listen(8002, () => {
     console.log("Running", 8002)
 });
 
-export default app;
+module.exports = app;

@@ -43,30 +43,30 @@ model PasswordResetToken {
 }
 
 model Blog {
-  id      String @id @default(uuid())
-  title   String
-  content Json
+  id          String  @id @default(uuid())
+  title       String
+  content     Json
   description String?
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
 
   pageViews Int @default(0)
 
-  seoPath String @default("")
+  seoPath String @unique
 
   version  Int           @default(1)
   versions BlogVersion[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model BlogVersion {
-  id      String @id @default(uuid())
-  title   String
-  content Json
+  id          String @id @default(uuid())
+  title       String
+  content     Json
   description String @default("")
-  version Int
-  blogId  String
-  blog    Blog   @relation(fields: [blogId], references: [id])
+  version     Int
+  blogId      String
+  blog        Blog   @relation(fields: [blogId], references: [id])
 }
