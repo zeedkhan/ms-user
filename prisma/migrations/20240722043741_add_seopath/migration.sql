@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Blog" ADD COLUMN     "pageViews" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "seoPath" TEXT NOT NULL DEFAULT '';
