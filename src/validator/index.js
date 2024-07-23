@@ -15,6 +15,7 @@ const blogSchema = Joi.object({
     content: Joi.object().required(),
     userId: Joi.string().required(),
     description: Joi.string().default(""),
+    version: Joi.number().default(1),
     seoPath: Joi.string().required().min(2),
 });
 
