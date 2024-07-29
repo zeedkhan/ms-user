@@ -12,6 +12,24 @@ enum UserRole {
   USER
 }
 
+enum MessageType {
+  TEXT
+  FILE
+}
+
+model Storage {
+  id        String   @id @default(cuid())
+  name      String
+  size      Int
+  key       String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
 model User {
   id            String    @id @default(uuid())
   name          String
@@ -21,7 +39,62 @@ model User {
   password      String
   role          UserRole  @default(USER)
 
-  blogs Blog[]
+  storageFiles Storage[]
+  messages  Message[]
+  chatRooms RoomUser[]
+  blogs     Blog[]
+}
+
+model RoomUser {
+  id     Int    @id @default(autoincrement())
+  userId String
+  roomId String
+
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+}
+
+model Room {
+  id        String     @id @default(cuid())
+  name      String
+  avatar    String?    @default("")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  users     RoomUser[]
+  messages  Message[]
+}
+
+model Message {
+  id         String      @id @default(cuid())
+  text       String?
+  type       MessageType
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  userId     String
+  chatRoomId String
+
+  files File[]
+
+  user User @relation(fields: [userId], references: [id])
+  room Room @relation(fields: [chatRoomId], references: [id])
+
+  isDeleted Boolean @default(false)
+
+  @@index([chatRoomId])
+}
+
+model File {
+  id        String   @id @default(cuid())
+  name      String
+  size      Int
+  key       String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messageId String
+  message   Message  @relation(fields: [messageId], references: [id])
 }
 
 model VerificationToken {

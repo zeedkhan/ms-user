@@ -157,6 +157,9 @@ const updateUserAvatar = async (req, res) => {
             }
         });
         delete updatedUser.password;
+
+        console.log(updatedUser);
+
         return res.json({
             success: "User updated"
         }).status(201)
@@ -170,10 +173,54 @@ const updateUserAvatar = async (req, res) => {
 
 
 const getAllUsers = async (req, res) => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        select: {
+            id: true,
+            name: true,
+            email: true,
+        }
+    });
     res.json({ data: users }).status(200)
 }
 
+
+const uploadUserFile = async (req, res) => {
+    const { userId, name, size, key, url } = req.body;
+    const uploadFile = await prisma.storage.create({
+        data: {
+            name: name,
+            size: size,
+            key: key,
+            url: url,
+            user: {
+                connect: {
+                    id: userId
+                }
+            }
+        }
+    });
+    res.json({ data: uploadFile }).status(200)
+}
+
+const getUserStorage = async (req, res) => {
+    const userId = req.params.id;
+    const userStorage = await prisma.storage.findMany({
+        where: {
+            userId: userId
+        }
+    });
+    res.json({ data: userStorage }).status(200)
+}
+
+const getFileId = async (req, res) => {
+    const fileId = req.params.fileId;
+    const file = await prisma.storage.findUnique({
+        where: {
+            id: fileId
+        }
+    });
+    res.json({ data: file }).status(200)
+}
 
 module.exports = {
     editUser,
@@ -182,5 +229,8 @@ module.exports = {
     signIn,
     getUser,
     newPassword,
-    updateUserAvatar
+    updateUserAvatar,
+    uploadUserFile,
+    getUserStorage,
+    getFileId
 }

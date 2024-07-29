@@ -29,6 +29,14 @@ const avatarSchema = Joi.object({
     id: Joi.string().optional()
 });
 
+const uploadToStorageSchema = Joi.object({
+    userId: Joi.string().required(),
+    name: Joi.string().required(), 
+    size: Joi.number().required(),
+    key: Joi.string().required(),
+    url: Joi.string().required(),
+})
+
 const UserRole = {
     ADMIN: 'ADMIN',
     USER: 'USER',
@@ -111,5 +119,6 @@ module.exports = {
     UpdateSchema,
     createUserSchema,
     signInSchema,
-    avatarSchema
+    avatarSchema,
+    uploadToStorageSchema
 }
