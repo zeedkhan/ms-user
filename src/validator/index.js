@@ -31,7 +31,7 @@ const avatarSchema = Joi.object({
 
 const uploadToStorageSchema = Joi.object({
     userId: Joi.string().required(),
-    name: Joi.string().required(), 
+    name: Joi.string().required(),
     size: Joi.number().required(),
     key: Joi.string().required(),
     url: Joi.string().required(),
@@ -109,7 +109,26 @@ const NewPasswordSchema = Joi.object({
     }),
 });
 
+
+const createDirectorySchema = Joi.object({
+    name: Joi.string().min(1).required(),
+    userId: Joi.string().required(),
+    parentId: Joi.string().optional()
+});
+
+
+const moveStorageSchema = Joi.object({
+    directoryId: Joi.string().required(),
+    ids: Joi.array().items(Joi.string()).required()
+});
+
+const moveDirectorySchema = Joi.object({
+    directoryId: Joi.string().required(),
+    ids: Joi.array().items(Joi.string()).required()
+});
+
 module.exports = {
+    moveStorageSchema,
     LoginSchema,
     RegisterSchema,
     ResetSchema,
@@ -120,5 +139,7 @@ module.exports = {
     createUserSchema,
     signInSchema,
     avatarSchema,
-    uploadToStorageSchema
+    uploadToStorageSchema,
+    createDirectorySchema,
+    moveDirectorySchema
 }

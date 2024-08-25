@@ -12,7 +12,7 @@ const createServer = () => {
     app.use(express.urlencoded({ extended: true }));
     app.use(cors())
 
-    app.use("/user", UserRouter);   
+    app.use("/user", UserRouter);
     app.use("/token", TokenRouter)
     app.use('/reset/pwd', PasswordRouter)
     app.use("/blog", BlogRouter)

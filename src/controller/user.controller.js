@@ -203,7 +203,7 @@ const uploadUserFile = async (req, res) => {
 }
 
 const getUserStorage = async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const userStorage = await prisma.storage.findMany({
         where: {
             userId: userId
@@ -212,7 +212,19 @@ const getUserStorage = async (req, res) => {
     res.json({ data: userStorage }).status(200)
 }
 
-const getFileId = async (req, res) => {
+const getUserStorageWithNoDirectory = async (req, res) => {
+    const userId = req.params.userId;
+    const userStorage = await prisma.storage.findMany({
+        where: {
+            userId: userId,
+            directoryId: null
+        }
+    });
+
+    res.json({ data: userStorage }).status(200)
+}
+
+const getStorageFileId = async (req, res) => {
     const fileId = req.params.fileId;
     const file = await prisma.storage.findUnique({
         where: {
@@ -220,6 +232,61 @@ const getFileId = async (req, res) => {
         }
     });
     res.json({ data: file }).status(200)
+};
+
+
+const deleteFileStorageAndDisconnectDirectory = async (fileId) => {
+    try {
+        const file = await prisma.storage.findUnique({
+            where: {
+                id: fileId
+            }
+        });
+        // Disconnect directory with file
+        if (file.directoryId) {
+            await prisma.directory.update({
+                where: {
+                    id: file.directoryId
+                },
+                data: {
+                    files: {
+                        disconnect: {
+                            id: fileId
+                        }
+                    }
+                }
+            });
+        }
+
+        await prisma.storage.delete({
+            where: {
+                id: fileId
+            },
+        })
+        return { success: "Storage file deleted" }
+    } catch (err) {
+        console.error(err);
+        return { error: "Error deleting blog" }
+    }
+}
+
+const deleteFileStorage = async (req, res) => {
+    const fileId = req.params.fileId;
+    if (!fileId) {
+        return res.json({ error: "Missing blog ID" }).status(400)
+    }
+    try {
+        const result  = await deleteFileStorageAndDisconnectDirectory(fileId);
+        if (result.success) {
+            return res.json({ success: "Storage file deleted" }).status(200)
+        }
+        if (result.error) {
+            return res.json({ error: "Error deleting blog" }).status(500)
+        };
+    } catch (err) {
+        console.error(err);
+        return res.json({ error: "Error deleting blog" }).status(500)
+    }
 }
 
 module.exports = {
@@ -232,5 +299,8 @@ module.exports = {
     updateUserAvatar,
     uploadUserFile,
     getUserStorage,
-    getFileId
+    getStorageFileId,
+    deleteFileStorage,
+    getUserStorageWithNoDirectory,
+    deleteFileStorageAndDisconnectDirectory
 }

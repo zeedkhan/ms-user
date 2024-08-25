@@ -1,0 +1,3 @@
+const audioFileExtensions = [".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a", ".wma", ".aiff", ".alac", ".opus", ".amr", ".pcm", ".mka", ".dsd", ".dts", ".au", ".ra", ".wv", ".tta", ".ac3"];
+const imageFileExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp", ".svg", ".heic", ".heif", ".ico", ".raw", ".psd", ".ai", ".eps", ".indd"];
+const videoFileExtensions = [".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm", ".mpeg", ".mpg", ".3gp", ".ogv", ".h264", ".hevc", ".divx", ".xvid", ".svi", ".vob"];

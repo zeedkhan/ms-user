@@ -28,6 +28,25 @@ model Storage {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  directoryId String?
+  directory   Directory? @relation(fields: [directoryId], references: [id])
+}
+
+model Directory {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  parentId String?
+  parent   Directory?  @relation("Subdirectories", fields: [parentId], references: [id])
+  children Directory[] @relation("Subdirectories")
+
+  files Storage[]
 }
 
 model User {
@@ -40,9 +59,10 @@ model User {
   role          UserRole  @default(USER)
 
   storageFiles Storage[]
-  messages  Message[]
-  chatRooms RoomUser[]
-  blogs     Blog[]
+  messages     Message[]
+  directories  Directory[]
+  chatRooms    RoomUser[]
+  blogs        Blog[]
 }
 
 model RoomUser {
