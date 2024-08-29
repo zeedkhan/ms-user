@@ -186,20 +186,55 @@ const getAllUsers = async (req, res) => {
 
 const uploadUserFile = async (req, res) => {
     const { userId, name, size, key, url } = req.body;
-    const uploadFile = await prisma.storage.create({
-        data: {
-            name: name,
-            size: size,
-            key: key,
-            url: url,
-            user: {
-                connect: {
-                    id: userId
+
+    const folder = req.headers["x-folder"];
+
+    /*
+        If we have / length > 1, then we create a file inside a folder
+        Otherwise we create a file in the root directory 
+        x-folder: "userId/folderName"
+    */
+
+    if (folder.split("/").length > 1) {
+        const [userId, folderId] = folder.split("/");
+
+        const uploadFile = await prisma.storage.create({
+            data: {
+                name: name,
+                size: size,
+                key: key,
+                url: url,
+                user: {
+                    connect: {
+                        id: userId
+                    }
+                },
+                directory: {
+                    connect: {
+                        id: folderId
+                    }
                 }
             }
-        }
-    });
-    res.json({ data: uploadFile }).status(200)
+        });
+
+        return res.json({ data: uploadFile }).status(200)
+    } else {
+        const uploadFile = await prisma.storage.create({
+            data: {
+                name: name,
+                size: size,
+                key: key,
+                url: url,
+                user: {
+                    connect: {
+                        id: userId
+                    }
+                }
+            }
+        });
+        return res.json({ data: uploadFile }).status(200)
+    }
+
 }
 
 const getUserStorage = async (req, res) => {
@@ -276,7 +311,7 @@ const deleteFileStorage = async (req, res) => {
         return res.json({ error: "Missing blog ID" }).status(400)
     }
     try {
-        const result  = await deleteFileStorageAndDisconnectDirectory(fileId);
+        const result = await deleteFileStorageAndDisconnectDirectory(fileId);
         if (result.success) {
             return res.json({ success: "Storage file deleted" }).status(200)
         }

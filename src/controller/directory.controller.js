@@ -64,15 +64,26 @@ const getUserDirectory = async (req, res) => {
  */
 const createDirectory = async (req, res) => {
     const { name, userId, parentId } = req.body;
+    let directory = null;
     try {
-        const createDirectory = await prisma.directory.create({
-            data: {
-                name: name,
-                userId: userId,
-                parentId: parentId || null
-            }
-        });
-        return res.status(201).json({ data: createDirectory });
+        if (parentId) {
+            directory = await prisma.directory.create({
+                data: {
+                    name: name,
+                    userId: userId,
+                    parentId: parentId
+                }
+            });
+        } else {
+            directory = await prisma.directory.create({
+                data: {
+                    name: name,
+                    userId: userId
+                }
+            });
+        }
+
+        return res.status(201).json({ data: directory });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Internal Server Error" });

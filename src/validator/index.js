@@ -35,6 +35,7 @@ const uploadToStorageSchema = Joi.object({
     size: Joi.number().required(),
     key: Joi.string().required(),
     url: Joi.string().required(),
+    folder: Joi.string().optional(),
 })
 
 const UserRole = {
