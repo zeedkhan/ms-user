@@ -146,10 +146,15 @@ model Blog {
   pageViews Int @default(0)
 
   seoPath String @unique
+  keywords String[]
 
   version  Int           @default(1)
   versions BlogVersion[]
 
+  ogImage       String?
+  ogUrl         String?
+  ogType        String?
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }

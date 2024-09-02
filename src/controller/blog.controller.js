@@ -28,20 +28,12 @@ const getBlog = async (req, res) => {
 
 // Create a new blog
 const createBlog = async (req, res) => {
-    const { title, seoPath, content, userId, description, version } = req.body;
-    if (!title || !content || !userId || !seoPath) {
-        return res.json({ error: "Missing required fields" }).status(400)
-    }
-
     try {
+        const { seoPath } = req.body;
         const blog = await prisma.blog.create({
             data: {
-                title,
-                version,
+                ...req.body,
                 seoPath: seoPath.replace(/\s/g, '-').toLowerCase(),
-                content,
-                userId,
-                description
             }
         })
         return res.json({ blog }).status(201)
@@ -54,22 +46,14 @@ const createBlog = async (req, res) => {
 
 // Update a blog
 const updateBlog = async (req, res) => {
-    const { title, content, userId, description } = req.body;
     const blogId = req.params.blogId;
-    if (!title || !content || !userId) {
-        return res.json({ error: "Missing required fields" }).status(400)
-    }
-
     try {
         const blog = await prisma.blog.update({
             where: {
                 id: blogId
             },
             data: {
-                title,
-                content,
-                userId,
-                description
+                ...req.body,
             }
         })
         return res.json(blog).status(200)

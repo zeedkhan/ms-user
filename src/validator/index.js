@@ -17,6 +17,10 @@ const blogSchema = Joi.object({
     description: Joi.string().default(""),
     version: Joi.number().default(1),
     seoPath: Joi.string().required().min(2),
+    keywords: Joi.array().items(Joi.string()).optional(),
+    ogImage: Joi.string().optional(),
+    ogUrl: Joi.string().optional(),
+    ogType: Joi.string().optional(),
 });
 
 const signInSchema = Joi.object({
