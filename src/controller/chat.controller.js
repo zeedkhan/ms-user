@@ -73,7 +73,7 @@ const getUserChatRoom = async (req, res) => {
                 },
             }
         }
-    })
+    });
     return res.json({ rooms }).status(200);
 }
 
@@ -106,12 +106,17 @@ const createChatRoom = async (req, res) => {
 // Delete chat room
 const deleteChatRoom = async (req, res) => {
     const { roomId } = req.params;
-    const room = await prisma.room.delete({
-        where: {
-            id: roomId
-        }
-    });
-    return res.json({ room }).status(200);
+    try {
+        await prisma.room.delete({
+            where: {
+                id: roomId
+            }
+        });
+        return res.status(200).json({ message: "Room deleted" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Failed to delete chat room" });
+    }
 }
 
 const createMessageFiles = async (

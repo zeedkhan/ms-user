@@ -5,6 +5,7 @@ const TokenRouter = require("../router/token.router");
 const PasswordRouter = require("../router/reset.router");
 const BlogRouter = require("../router/blog.router");
 const ChatRouter = require("../router/chat.router");
+const AIChatRouter = require("../router/aichat.router");
 
 const createServer = () => {
     const app = express();
@@ -17,6 +18,7 @@ const createServer = () => {
     app.use('/reset/pwd', PasswordRouter)
     app.use("/blog", BlogRouter)
     app.use("/chat", ChatRouter)
+    app.use("/chat/ai", AIChatRouter)
 
     return app
 }

@@ -62,6 +62,7 @@ model User {
   messages     Message[]
   directories  Directory[]
   chatRooms    RoomUser[]
+  aiChatRooms  AIChatRoomUser[]
   blogs        Blog[]
 }
 
@@ -70,8 +71,8 @@ model RoomUser {
   userId String
   roomId String
 
-  user User @relation(fields: [userId], references: [id])
-  room Room @relation(fields: [roomId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roomId])
 }
@@ -86,6 +87,27 @@ model Room {
   messages  Message[]
 }
 
+model AIChatRoomUser {
+  id     Int    @id @default(autoincrement())
+  userId String
+  roomId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room AIChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+}
+
+model AIChatRoom  {
+  id        String     @id @default(cuid())
+  name      String
+  avatar    String?    @default("")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  messages  Json[]
+  users     AIChatRoomUser[]
+}
+
 model Message {
   id         String      @id @default(cuid())
   text       String?
@@ -97,8 +119,8 @@ model Message {
 
   files File[]
 
-  user User @relation(fields: [userId], references: [id])
-  room Room @relation(fields: [chatRoomId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room Room @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
 
   isDeleted Boolean @default(false)
 
@@ -114,7 +136,7 @@ model File {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   messageId String
-  message   Message  @relation(fields: [messageId], references: [id])
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
